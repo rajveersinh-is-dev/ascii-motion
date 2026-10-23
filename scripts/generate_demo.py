@@ -30,7 +30,8 @@ def main() -> None:
 
     config = RenderConfig(
         preset="custom",
-        width=80,
+        width=120,
+        ramp_name="standard_70",
         style="color",
         target_fps=15.0,
         dithering="bayer",

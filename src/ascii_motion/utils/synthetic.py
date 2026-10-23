@@ -31,7 +31,7 @@ def generate_synthetic_frame(
     t = frame_idx / max(total_frames, 1)  # Normalized time [0, 1]
     angle = 2.0 * math.pi * t
 
-    # 1. Sky & Horizon Gradient
+    # 1. Sky & Horizon Gradient with Twinkling Starfield
     horizon_y = int(height * 0.58)
     for y in range(horizon_y):
         v = y / horizon_y
@@ -39,6 +39,22 @@ def generate_synthetic_frame(
         g = int(20 + 70 * v)
         b = int(75 + 130 * v)
         draw.line([(0, y), (width, y)], fill=(min(255, r), min(255, g), min(255, b)))
+
+    for s_idx in range(35):
+        sx = int((17 + s_idx * 37) % width)
+        sy = int((11 + s_idx * 19) % (horizon_y - 25))
+        twinkle = 0.5 + 0.5 * math.sin(angle * 3.0 + s_idx * 1.7)
+        if twinkle > 0.3:
+            s_lum = int(180 + 75 * twinkle)
+            draw.point((sx, sy), fill=(s_lum, s_lum, 255))
+
+    # Distant mountain peaks along horizon
+    mountain_pts = [(0, horizon_y)]
+    for mx in range(0, width + 40, 40):
+        h_offset = 32.0 * math.sin(mx * 0.02 + 1.0) + 18.0 * math.sin(mx * 0.05)
+        mountain_pts.append((mx, int(horizon_y - abs(h_offset))))
+    mountain_pts.append((width, horizon_y))
+    draw.polygon(mountain_pts, fill=(45, 20, 65), outline=(255, 60, 160), width=2)
 
     # Ground Gradient
     for y in range(horizon_y, height):
@@ -75,20 +91,34 @@ def generate_synthetic_frame(
         if horizon_y < y_pos < height:
             draw.line([(0, y_pos), (width, y_pos)], fill=(255, 20, 190), width=2)
 
-    # 4. Rotating 3D Solid Shaded Cube
-    cube_verts = np.array(
-        [
-            [-1, -1, -1],
-            [1, -1, -1],
-            [1, 1, -1],
-            [-1, 1, -1],
-            [-1, -1, 1],
-            [1, -1, 1],
-            [1, 1, 1],
-            [-1, 1, 1],
-        ],
-        dtype=np.float32,
-    )
+    # 4. Rotating 3D Solid Shaded 20-Face Regular Icosahedron
+    phi = (1.0 + math.sqrt(5.0)) / 2.0
+    base_verts = []
+    for x in [-1.0, 1.0]:
+        for y in [-phi, phi]:
+            base_verts.append([x, y, 0.0])
+    for y in [-1.0, 1.0]:
+        for z in [-phi, phi]:
+            base_verts.append([0.0, y, z])
+    for z in [-1.0, 1.0]:
+        for x in [-phi, phi]:
+            base_verts.append([x, 0.0, z])
+    base_verts = np.array(base_verts, dtype=np.float32)
+    base_verts = base_verts / float(np.linalg.norm(base_verts[0]))
+
+    dist_target = 1.05146
+    faces = []
+    for i in range(12):
+        for j in range(i + 1, 12):
+            if abs(float(np.linalg.norm(base_verts[i] - base_verts[j])) - dist_target) < 0.08:
+                for k in range(j + 1, 12):
+                    if (
+                        abs(float(np.linalg.norm(base_verts[i] - base_verts[k])) - dist_target)
+                        < 0.08
+                        and abs(float(np.linalg.norm(base_verts[j] - base_verts[k])) - dist_target)
+                        < 0.08
+                    ):
+                        faces.append([i, j, k])
 
     rot_y = np.array(
         [
@@ -108,35 +138,52 @@ def generate_synthetic_frame(
         dtype=np.float32,
     )
 
-    rot_verts = cube_verts @ rot_y.T @ rot_x.T
+    rot_verts = base_verts @ rot_y.T @ rot_x.T
     focal = 3.2
     scale = 135
     projected = []
-    cube_cy = horizon_y - 25
+    cube_cy = horizon_y - 20
     for v in rot_verts:
         z = v[2] + focal
         px = int(sun_cx + (v[0] / z) * scale * 2.2)
         py = int(cube_cy + (v[1] / z) * scale * 2.2)
         projected.append((px, py))
 
-    faces = [
-        ([0, 1, 2, 3], (0, 240, 255)),  # Cyan
-        ([4, 5, 6, 7], (255, 0, 140)),  # Pink
-        ([3, 2, 6, 7], (0, 255, 120)),  # Green
-        ([0, 1, 5, 4], (255, 180, 20)),  # Amber
-        ([0, 3, 7, 4], (180, 50, 255)),  # Purple
-        ([1, 2, 6, 5], (255, 255, 40)),  # Yellow
+    colors_20 = [
+        (0, 240, 255),
+        (255, 0, 140),
+        (0, 255, 120),
+        (255, 180, 20),
+        (180, 50, 255),
+        (255, 255, 40),
+        (255, 80, 0),
+        (0, 200, 255),
+        (255, 0, 200),
+        (50, 255, 180),
+        (240, 220, 0),
+        (150, 0, 255),
+        (0, 255, 240),
+        (255, 120, 0),
+        (0, 255, 70),
+        (255, 0, 90),
+        (120, 180, 255),
+        (255, 200, 50),
+        (200, 0, 255),
+        (0, 255, 150),
     ]
 
     face_order = []
-    for face_idx, (idx_list, col) in enumerate(faces):
+    for face_idx, idx_list in enumerate(faces):
         avg_z = float(np.mean([rot_verts[i, 2] for i in idx_list]))
         v0, v1, v2 = rot_verts[idx_list[0]], rot_verts[idx_list[1]], rot_verts[idx_list[2]]
         norm = np.cross(v1 - v0, v2 - v0)
+        center_face = (v0 + v1 + v2) / 3.0
+        if np.dot(norm, center_face) < 0:
+            norm = -norm
         norm_len = float(np.linalg.norm(norm))
         if norm_len > 1e-6:
             norm = norm / norm_len
-        face_order.append((avg_z, face_idx, idx_list, col, norm))
+        face_order.append((avg_z, face_idx, idx_list, colors_20[face_idx % len(colors_20)], norm))
 
     face_order.sort(key=lambda x: x[0])  # Back to front
     light_dir = np.array([0.5, -0.7, -0.6], dtype=np.float32)
