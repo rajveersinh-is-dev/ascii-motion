@@ -1,0 +1,213 @@
+{
+  "timestamp": "2026-10-23T10:20:05Z",
+  "environment": {
+    "os": "Windows-11-10.0.22631-SP0",
+    "processor": "Intel64 Family 6 Model 141 Stepping 1, GenuineIntel",
+    "cpu_count": 12,
+    "python_version": "3.14.6",
+    "numpy_version": "2.5.4",
+    "machine": "AMD64"
+  },
+  "microbenchmarks": [
+    {
+      "test": "Low (60 cols, color)",
+      "category": "microbenchmark",
+      "grid_dimensions": [
+        60,
+        17
+      ],
+      "total_cells": 1020,
+      "mean_ms": 1.429,
+      "median_ms": 1.28,
+      "stdev_ms": 0.358,
+      "throughput_fps": 699.7,
+      "runs": 15,
+      "warmup_runs": 5
+    },
+    {
+      "test": "Medium (100 cols, color)",
+      "category": "microbenchmark",
+      "grid_dimensions": [
+        100,
+        28
+      ],
+      "total_cells": 2800,
+      "mean_ms": 1.545,
+      "median_ms": 1.487,
+      "stdev_ms": 0.263,
+      "throughput_fps": 647.5,
+      "runs": 15,
+      "warmup_runs": 5
+    },
+    {
+      "test": "High (160 cols, color)",
+      "category": "microbenchmark",
+      "grid_dimensions": [
+        160,
+        45
+      ],
+      "total_cells": 7200,
+      "mean_ms": 2.3,
+      "median_ms": 2.282,
+      "stdev_ms": 0.457,
+      "throughput_fps": 434.7,
+      "runs": 15,
+      "warmup_runs": 5
+    },
+    {
+      "test": "Ultra (240 cols, color)",
+      "category": "microbenchmark",
+      "grid_dimensions": [
+        240,
+        68
+      ],
+      "total_cells": 16320,
+      "mean_ms": 2.308,
+      "median_ms": 2.138,
+      "stdev_ms": 0.396,
+      "throughput_fps": 433.2,
+      "runs": 15,
+      "warmup_runs": 5
+    },
+    {
+      "test": "Medium (100 cols, monochrome)",
+      "category": "microbenchmark",
+      "grid_dimensions": [
+        100,
+        28
+      ],
+      "total_cells": 2800,
+      "mean_ms": 1.868,
+      "median_ms": 1.942,
+      "stdev_ms": 0.37,
+      "throughput_fps": 535.2,
+      "runs": 15,
+      "warmup_runs": 5
+    },
+    {
+      "test": "Medium (100 cols, green)",
+      "category": "microbenchmark",
+      "grid_dimensions": [
+        100,
+        28
+      ],
+      "total_cells": 2800,
+      "mean_ms": 1.627,
+      "median_ms": 1.517,
+      "stdev_ms": 0.237,
+      "throughput_fps": 614.5,
+      "runs": 15,
+      "warmup_runs": 5
+    },
+    {
+      "test": "Medium (100 cols, amber)",
+      "category": "microbenchmark",
+      "grid_dimensions": [
+        100,
+        28
+      ],
+      "total_cells": 2800,
+      "mean_ms": 1.49,
+      "median_ms": 1.398,
+      "stdev_ms": 0.215,
+      "throughput_fps": 671.3,
+      "runs": 15,
+      "warmup_runs": 5
+    },
+    {
+      "test": "Medium + Bayer Dithering",
+      "category": "microbenchmark",
+      "grid_dimensions": [
+        100,
+        28
+      ],
+      "total_cells": 2800,
+      "mean_ms": 1.623,
+      "median_ms": 1.535,
+      "stdev_ms": 0.266,
+      "throughput_fps": 616.1,
+      "runs": 15,
+      "warmup_runs": 5
+    },
+    {
+      "test": "Medium + Floyd-Steinberg Dithering",
+      "category": "microbenchmark",
+      "grid_dimensions": [
+        100,
+        28
+      ],
+      "total_cells": 2800,
+      "mean_ms": 21.932,
+      "median_ms": 21.243,
+      "stdev_ms": 2.29,
+      "throughput_fps": 45.6,
+      "runs": 15,
+      "warmup_runs": 5
+    },
+    {
+      "test": "Medium + Sobel Edge Enhancement",
+      "category": "microbenchmark",
+      "grid_dimensions": [
+        100,
+        28
+      ],
+      "total_cells": 2800,
+      "mean_ms": 1.941,
+      "median_ms": 1.889,
+      "stdev_ms": 0.291,
+      "throughput_fps": 515.1,
+      "runs": 15,
+      "warmup_runs": 5
+    },
+    {
+      "test": "Medium + Temporal Smoothing",
+      "category": "microbenchmark",
+      "grid_dimensions": [
+        100,
+        28
+      ],
+      "total_cells": 2800,
+      "mean_ms": 1.512,
+      "median_ms": 1.41,
+      "stdev_ms": 0.289,
+      "throughput_fps": 661.3,
+      "runs": 15,
+      "warmup_runs": 5
+    }
+  ],
+  "end_to_end": [
+    {
+      "test": "E2E: MP4 Export (100 cols, color)",
+      "category": "end_to_end",
+      "format": "mp4",
+      "input_duration_s": 2.0,
+      "frames_processed": 60,
+      "mean_total_time_s": 1.345,
+      "throughput_fps": 44.6,
+      "output_size_bytes": 103857,
+      "runs": 3
+    },
+    {
+      "test": "E2E: HTML Export (100 cols, color)",
+      "category": "end_to_end",
+      "format": "html",
+      "input_duration_s": 2.0,
+      "frames_processed": 60,
+      "mean_total_time_s": 0.586,
+      "throughput_fps": 102.4,
+      "output_size_bytes": 2037125,
+      "runs": 3
+    },
+    {
+      "test": "E2E: MP4 Export (60 cols, green phosphor)",
+      "category": "end_to_end",
+      "format": "mp4",
+      "input_duration_s": 2.0,
+      "frames_processed": 60,
+      "mean_total_time_s": 0.472,
+      "throughput_fps": 127.0,
+      "output_size_bytes": 59989,
+      "runs": 3
+    }
+  ]
+}
