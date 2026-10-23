@@ -48,6 +48,7 @@ tmp/
 temp/
 *.tmp
 *.log
+assets/benchmark_sample*
 uploads/
 output_temp/
 

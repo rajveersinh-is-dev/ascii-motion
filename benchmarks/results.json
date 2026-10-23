@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-23T10:20:05Z",
+  "timestamp": "2026-10-23T15:20:23Z",
   "environment": {
     "os": "Windows-11-10.0.22631-SP0",
     "processor": "Intel64 Family 6 Model 141 Stepping 1, GenuineIntel",
@@ -17,10 +17,10 @@
         17
       ],
       "total_cells": 1020,
-      "mean_ms": 1.429,
-      "median_ms": 1.28,
-      "stdev_ms": 0.358,
-      "throughput_fps": 699.7,
+      "mean_ms": 1.709,
+      "median_ms": 1.722,
+      "stdev_ms": 0.418,
+      "throughput_fps": 585.1,
       "runs": 15,
       "warmup_runs": 5
     },
@@ -32,10 +32,10 @@
         28
       ],
       "total_cells": 2800,
-      "mean_ms": 1.545,
-      "median_ms": 1.487,
-      "stdev_ms": 0.263,
-      "throughput_fps": 647.5,
+      "mean_ms": 1.878,
+      "median_ms": 1.816,
+      "stdev_ms": 0.423,
+      "throughput_fps": 532.4,
       "runs": 15,
       "warmup_runs": 5
     },
@@ -47,10 +47,10 @@
         45
       ],
       "total_cells": 7200,
-      "mean_ms": 2.3,
-      "median_ms": 2.282,
-      "stdev_ms": 0.457,
-      "throughput_fps": 434.7,
+      "mean_ms": 1.999,
+      "median_ms": 1.807,
+      "stdev_ms": 0.492,
+      "throughput_fps": 500.2,
       "runs": 15,
       "warmup_runs": 5
     },
@@ -62,10 +62,10 @@
         68
       ],
       "total_cells": 16320,
-      "mean_ms": 2.308,
-      "median_ms": 2.138,
-      "stdev_ms": 0.396,
-      "throughput_fps": 433.2,
+      "mean_ms": 2.661,
+      "median_ms": 2.453,
+      "stdev_ms": 0.635,
+      "throughput_fps": 375.8,
       "runs": 15,
       "warmup_runs": 5
     },
@@ -77,10 +77,10 @@
         28
       ],
       "total_cells": 2800,
-      "mean_ms": 1.868,
-      "median_ms": 1.942,
-      "stdev_ms": 0.37,
-      "throughput_fps": 535.2,
+      "mean_ms": 1.886,
+      "median_ms": 1.806,
+      "stdev_ms": 0.454,
+      "throughput_fps": 530.3,
       "runs": 15,
       "warmup_runs": 5
     },
@@ -92,10 +92,10 @@
         28
       ],
       "total_cells": 2800,
-      "mean_ms": 1.627,
-      "median_ms": 1.517,
-      "stdev_ms": 0.237,
-      "throughput_fps": 614.5,
+      "mean_ms": 1.671,
+      "median_ms": 1.612,
+      "stdev_ms": 0.245,
+      "throughput_fps": 598.3,
       "runs": 15,
       "warmup_runs": 5
     },
@@ -107,10 +107,10 @@
         28
       ],
       "total_cells": 2800,
-      "mean_ms": 1.49,
-      "median_ms": 1.398,
-      "stdev_ms": 0.215,
-      "throughput_fps": 671.3,
+      "mean_ms": 1.676,
+      "median_ms": 1.493,
+      "stdev_ms": 0.428,
+      "throughput_fps": 596.5,
       "runs": 15,
       "warmup_runs": 5
     },
@@ -122,10 +122,10 @@
         28
       ],
       "total_cells": 2800,
-      "mean_ms": 1.623,
-      "median_ms": 1.535,
-      "stdev_ms": 0.266,
-      "throughput_fps": 616.1,
+      "mean_ms": 1.91,
+      "median_ms": 1.886,
+      "stdev_ms": 0.383,
+      "throughput_fps": 523.6,
       "runs": 15,
       "warmup_runs": 5
     },
@@ -137,10 +137,10 @@
         28
       ],
       "total_cells": 2800,
-      "mean_ms": 21.932,
-      "median_ms": 21.243,
-      "stdev_ms": 2.29,
-      "throughput_fps": 45.6,
+      "mean_ms": 22.566,
+      "median_ms": 22.707,
+      "stdev_ms": 1.962,
+      "throughput_fps": 44.3,
       "runs": 15,
       "warmup_runs": 5
     },
@@ -152,10 +152,10 @@
         28
       ],
       "total_cells": 2800,
-      "mean_ms": 1.941,
-      "median_ms": 1.889,
-      "stdev_ms": 0.291,
-      "throughput_fps": 515.1,
+      "mean_ms": 1.792,
+      "median_ms": 1.743,
+      "stdev_ms": 0.105,
+      "throughput_fps": 558.0,
       "runs": 15,
       "warmup_runs": 5
     },
@@ -167,10 +167,10 @@
         28
       ],
       "total_cells": 2800,
-      "mean_ms": 1.512,
-      "median_ms": 1.41,
-      "stdev_ms": 0.289,
-      "throughput_fps": 661.3,
+      "mean_ms": 1.572,
+      "median_ms": 1.508,
+      "stdev_ms": 0.215,
+      "throughput_fps": 636.0,
       "runs": 15,
       "warmup_runs": 5
     }
@@ -182,9 +182,9 @@
       "format": "mp4",
       "input_duration_s": 2.0,
       "frames_processed": 60,
-      "mean_total_time_s": 1.345,
-      "throughput_fps": 44.6,
-      "output_size_bytes": 103857,
+      "mean_total_time_s": 2.247,
+      "throughput_fps": 26.7,
+      "output_size_bytes": 431422,
       "runs": 3
     },
     {
@@ -193,8 +193,8 @@
       "format": "html",
       "input_duration_s": 2.0,
       "frames_processed": 60,
-      "mean_total_time_s": 0.586,
-      "throughput_fps": 102.4,
+      "mean_total_time_s": 0.489,
+      "throughput_fps": 122.6,
       "output_size_bytes": 2037125,
       "runs": 3
     },
@@ -204,9 +204,9 @@
       "format": "mp4",
       "input_duration_s": 2.0,
       "frames_processed": 60,
-      "mean_total_time_s": 0.472,
-      "throughput_fps": 127.0,
-      "output_size_bytes": 59989,
+      "mean_total_time_s": 0.612,
+      "throughput_fps": 98.1,
+      "output_size_bytes": 209189,
       "runs": 3
     }
   ]

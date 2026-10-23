@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from PIL import Image, ImageFont
+from PIL import Image
 
 from ascii_motion.config import RenderConfig
 from ascii_motion.core.converter import AsciiFrame
-from ascii_motion.exporters.mp4 import render_ascii_frame_to_image
+from ascii_motion.exporters.mp4 import get_monospace_font, render_ascii_frame_to_image
 
 
 def export_to_gif(
@@ -37,10 +37,7 @@ def export_to_gif(
     target_fps = fps or config.target_fps or 15.0
     duration_ms = int(round(1000.0 / target_fps))
 
-    font = ImageFont.load_default()
-    bbox = font.getbbox("M")
-    char_w = max(bbox[2] - bbox[0], 6)
-    char_h = max(bbox[3] - bbox[1], 12)
+    font, char_w, char_h = get_monospace_font(size=15)
 
     pil_images: list[Image.Image] = []
     for frame in frames:
@@ -57,7 +54,7 @@ def export_to_gif(
         append_images=pil_images[1:],
         duration=duration_ms,
         loop=0,
-        optimize=True,
+        optimize=False,
     )
 
     return out_file

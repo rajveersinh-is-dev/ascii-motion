@@ -28,14 +28,15 @@ def main() -> None:
     )
     print(f"   Created source: {source_path.stat().st_size / 1024:.1f} KB")
 
-    # 2. Convert to ASCII frames using medium preset (80 cols for compact GIF demo)
     config = RenderConfig(
         preset="custom",
         width=80,
         style="color",
         target_fps=15.0,
-        contrast=1.1,
-        brightness=1.05,
+        dithering="bayer",
+        edge_mode="sobel",
+        contrast=1.2,
+        brightness=1.1,
     )
     meta = probe_video(source_path)
     converter = FrameConverter(config)

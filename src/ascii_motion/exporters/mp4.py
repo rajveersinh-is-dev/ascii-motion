@@ -16,6 +16,44 @@ from ascii_motion.video.ffmpeg import get_ffmpeg_path
 from ascii_motion.video.probe import probe_video
 
 
+def get_monospace_font(size: int = 16) -> tuple[ImageFont.ImageFont, int, int]:
+    """Find and load a crisp monospace font, returning (font, char_width, char_height)."""
+    candidates = [
+        "C:/Windows/Fonts/consolab.ttf",
+        "C:/Windows/Fonts/consola.ttf",
+        "C:/Windows/Fonts/courbd.ttf",
+        "C:/Windows/Fonts/cour.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationMono-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationMono-Regular.ttf",
+        "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
+        "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
+        "/System/Library/Fonts/Menlo.ttc",
+        "/Library/Fonts/Courier New Bold.ttf",
+    ]
+    font: ImageFont.ImageFont | None = None
+    for cand in candidates:
+        if Path(cand).is_file():
+            try:
+                font = ImageFont.truetype(cand, size=size)
+                break
+            except Exception:
+                pass
+
+    if font is None:
+        try:
+            font = ImageFont.load_default(size=size)
+        except TypeError:
+            font = ImageFont.load_default()
+
+    bbox = font.getbbox("M")
+    adv = font.getlength("M") if hasattr(font, "getlength") else float(bbox[2] - bbox[0])
+    char_w = max(int(round(adv)), 8)
+    char_h = max(int(round(char_w / 0.55)), 14)
+    return font, char_w, char_h
+
+
 def render_ascii_frame_to_image(
     frame: AsciiFrame,
     config: RenderConfig,
@@ -112,10 +150,7 @@ def export_to_mp4(
     target_fps = fps or config.target_fps or 24.0
     ffmpeg_exe = get_ffmpeg_path()
 
-    font = ImageFont.load_default()
-    bbox = font.getbbox("M")
-    char_w = max(bbox[2] - bbox[0], 6)
-    char_h = max(bbox[3] - bbox[1], 12)
+    font, char_w, char_h = get_monospace_font(size=15)
 
     # Convert frames iterator to list if needed for dimensions
     frames_list = list(frames)

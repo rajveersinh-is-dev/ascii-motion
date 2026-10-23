@@ -20,40 +20,63 @@ def generate_synthetic_frame(
 ) -> np.ndarray:
     """Generate a single deterministic synthetic RGB video frame.
 
-    Draws a vibrant scene with rotating 3D wireframe cube, bouncing sphere,
-    pulsing concentric rings, animated high-contrast gradients, and readable text.
+    Renders a vibrant, high-contrast synthwave scene featuring a rotating 3D
+    solid-shaded polyhedron with Lambertian directional lighting, glowing retro
+    segmented sun, perspective ground grid in motion, specular bouncing sphere,
+    high-contrast title banner, and HUD telemetry.
     """
-    img = Image.new("RGB", (width, height), color=(10, 12, 20))
+    img = Image.new("RGB", (width, height), color=(15, 10, 30))
     draw = ImageDraw.Draw(img)
 
     t = frame_idx / max(total_frames, 1)  # Normalized time [0, 1]
     angle = 2.0 * math.pi * t
 
-    # 1. Background radial gradient / pulsing glow
-    cx, cy = width // 2, height // 2
-    pulse_radius = int(80 + 30 * math.sin(angle * 2))
-    for r in range(pulse_radius, 0, -10):
-        intensity = int(40 * (1.0 - r / pulse_radius))
-        draw.ellipse(
-            [cx - r * 2, cy - r, cx + r * 2, cy + r],
-            outline=(intensity // 2, intensity, intensity * 2),
+    # 1. Sky & Horizon Gradient
+    horizon_y = int(height * 0.58)
+    for y in range(horizon_y):
+        v = y / horizon_y
+        r = int(45 + 180 * (v**1.4))
+        g = int(20 + 70 * v)
+        b = int(75 + 130 * v)
+        draw.line([(0, y), (width, y)], fill=(min(255, r), min(255, g), min(255, b)))
+
+    # Ground Gradient
+    for y in range(horizon_y, height):
+        v = (y - horizon_y) / (height - horizon_y)
+        r = int(60 * (1 - v) + 15)
+        g = int(30 * (1 - v) + 20)
+        b = int(90 * (1 - v) + 50)
+        draw.line([(0, y), (width, y)], fill=(r, g, b))
+
+    # 2. Glowing retro segmented sun
+    sun_cx, sun_cy = width // 2, horizon_y - 12
+    sun_r = 75
+    for r_s in range(sun_r, 0, -2):
+        frac = r_s / sun_r
+        c_sun = (255, int(240 * (1 - frac * 0.4)), int(80 * (1 - frac)))
+        draw.ellipse([sun_cx - r_s, sun_cy - r_s, sun_cx + r_s, sun_cy + r_s], fill=c_sun)
+
+    # Sun horizontal slice blinds
+    for y_blind in range(sun_cy - 10, sun_cy + sun_r, 9):
+        draw.rectangle(
+            [sun_cx - sun_r - 8, y_blind, sun_cx + sun_r + 8, y_blind + 3], fill=(45, 20, 60)
         )
 
-    # 2. Pulsing concentric circular rings
-    num_rings = 4
-    for i in range(num_rings):
-        ring_phase = (t + i / num_rings) % 1.0
-        r_rad = int(ring_phase * min(width, height) * 0.45)
-        alpha = int(255 * (1.0 - ring_phase))
-        color = (
-            int(50 + 150 * math.sin(angle + i)),
-            int(100 + 100 * math.cos(angle + i * 0.5)),
-            alpha,
-        )
-        draw.ellipse([cx - r_rad, cy - r_rad, cx + r_rad, cy + r_rad], outline=color, width=2)
+    # 3. Ground perspective grid
+    grid_offset = (t * 40.0) % 40.0
+    for i in range(-12, 13):
+        x_top = sun_cx + i * 22
+        x_bot = sun_cx + i * 115
+        draw.line([(x_top, horizon_y), (x_bot, height)], fill=(0, 240, 255), width=2)
 
-    # 3. Rotating 3D Wireframe Cube
-    cube_nodes = np.array(
+    for row_idx in range(7):
+        prog = ((row_idx * 15.0 + grid_offset) / 105.0) ** 1.8
+        y_pos = int(horizon_y + prog * (height - horizon_y))
+        if horizon_y < y_pos < height:
+            draw.line([(0, y_pos), (width, y_pos)], fill=(255, 20, 190), width=2)
+
+    # 4. Rotating 3D Solid Shaded Cube
+    cube_verts = np.array(
         [
             [-1, -1, -1],
             [1, -1, -1],
@@ -85,65 +108,83 @@ def generate_synthetic_frame(
         dtype=np.float32,
     )
 
-    rotated = cube_nodes @ rot_y.T @ rot_x.T
-
-    scale = min(width, height) * 0.22
-    focal = 3.0
+    rot_verts = cube_verts @ rot_y.T @ rot_x.T
+    focal = 3.2
+    scale = 135
     projected = []
-    for node in rotated:
-        z = node[2] + focal
-        px = int(cx + (node[0] / z) * scale * 2.0)
-        py = int(cy + (node[1] / z) * scale * 2.0)
+    cube_cy = horizon_y - 25
+    for v in rot_verts:
+        z = v[2] + focal
+        px = int(sun_cx + (v[0] / z) * scale * 2.2)
+        py = int(cube_cy + (v[1] / z) * scale * 2.2)
         projected.append((px, py))
 
-    edges = [
-        (0, 1),
-        (1, 2),
-        (2, 3),
-        (3, 0),  # back face
-        (4, 5),
-        (5, 6),
-        (6, 7),
-        (7, 4),  # front face
-        (0, 4),
-        (1, 5),
-        (2, 6),
-        (3, 7),  # connecting edges
+    faces = [
+        ([0, 1, 2, 3], (0, 240, 255)),  # Cyan
+        ([4, 5, 6, 7], (255, 0, 140)),  # Pink
+        ([3, 2, 6, 7], (0, 255, 120)),  # Green
+        ([0, 1, 5, 4], (255, 180, 20)),  # Amber
+        ([0, 3, 7, 4], (180, 50, 255)),  # Purple
+        ([1, 2, 6, 5], (255, 255, 40)),  # Yellow
     ]
 
-    for p1_idx, p2_idx in edges:
-        p1 = projected[p1_idx]
-        p2 = projected[p2_idx]
-        draw.line([p1, p2], fill=(0, 255, 200), width=3)
+    face_order = []
+    for face_idx, (idx_list, col) in enumerate(faces):
+        avg_z = float(np.mean([rot_verts[i, 2] for i in idx_list]))
+        v0, v1, v2 = rot_verts[idx_list[0]], rot_verts[idx_list[1]], rot_verts[idx_list[2]]
+        norm = np.cross(v1 - v0, v2 - v0)
+        norm_len = float(np.linalg.norm(norm))
+        if norm_len > 1e-6:
+            norm = norm / norm_len
+        face_order.append((avg_z, face_idx, idx_list, col, norm))
 
-    # 4. Bouncing high-contrast gradient sphere
-    sphere_x = int(cx + math.sin(angle * 2) * (width * 0.35))
-    sphere_y = int(cy + abs(math.cos(angle * 2)) * (height * 0.3) - height * 0.15)
-    sphere_radius = 28
+    face_order.sort(key=lambda x: x[0])  # Back to front
+    light_dir = np.array([0.5, -0.7, -0.6], dtype=np.float32)
+    light_dir = light_dir / float(np.linalg.norm(light_dir))
+
+    for _, _, idx_list, col, norm in face_order:
+        if norm[2] < 0.15:  # Facing camera
+            poly = [projected[i] for i in idx_list]
+            diffuse = max(0.55, float(np.dot(-norm, light_dir)))
+            face_col = tuple(min(255, int(c * diffuse)) for c in col)
+            draw.polygon(poly, fill=face_col, outline=(255, 255, 255), width=2)
+
+    # 5. Bouncing 3D Shaded Specular Sphere
+    sphere_cx = int(sun_cx + math.sin(angle * 2.0) * (width * 0.36))
+    bounce_phase = abs(math.cos(angle * 2.0))
+    sphere_cy = int(horizon_y + 10 - bounce_phase * (height * 0.35))
+    s_rad = 26
+    for sr in range(s_rad, 0, -1):
+        s_frac = sr / s_rad
+        hx = sphere_cx - int(s_rad * 0.35 * (1 - s_frac))
+        hy = sphere_cy - int(s_rad * 0.35 * (1 - s_frac))
+        scol = (
+            min(255, int(255 * (1 - s_frac * 0.6))),
+            min(255, int(60 + 195 * (1 - s_frac))),
+            min(255, int(120 + 135 * (1 - s_frac))),
+        )
+        draw.ellipse([hx - sr, hy - sr, hx + sr, hy + sr], fill=scol)
     draw.ellipse(
-        [
-            sphere_x - sphere_radius,
-            sphere_y - sphere_radius,
-            sphere_x + sphere_radius,
-            sphere_y + sphere_radius,
-        ],
-        fill=(255, 60, 120),
+        [sphere_cx - s_rad, sphere_cy - s_rad, sphere_cx + s_rad, sphere_cy + s_rad],
         outline=(255, 255, 255),
         width=2,
     )
 
-    # 5. Crisp typography: "ASCII-MOTION"
+    # 6. Top Title Banner
+    banner_w, banner_h = 240, 32
+    bx, by = (width - banner_w) // 2, 12
+    draw.rectangle(
+        [bx, by, bx + banner_w, by + banner_h],
+        fill=(10, 15, 30),
+        outline=(0, 240, 255),
+        width=2,
+    )
     font = ImageFont.load_default()
-    title = "ASCII-MOTION"
-    draw.text((cx - 38, cy - 6), title, fill=(255, 255, 255), font=font)
+    draw.text((bx + 75, by + 10), "ASCII-MOTION", fill=(255, 255, 255), font=font)
 
-    # 6. Timecode and progress indicator
-    time_str = f"FRAME {frame_idx:03d}/{total_frames:03d} | T={t * 100:.0f}%"
-    draw.text((15, height - 25), time_str, fill=(180, 220, 255), font=font)
-
-    # Progress bar at bottom
-    bar_width = int(width * t)
-    draw.rectangle([0, height - 5, bar_width, height], fill=(0, 255, 128))
+    # 7. Progress indicator
+    pbar_w = int(width * t)
+    draw.rectangle([0, height - 6, pbar_w, height], fill=(0, 255, 128))
 
     return np.array(img, dtype=np.uint8)
 
