@@ -7,7 +7,7 @@ import subprocess
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 
 from ascii_motion.video.ffmpeg import get_ffmpeg_path
 
@@ -217,17 +217,6 @@ def generate_synthetic_frame(
         width=2,
     )
 
-    # 6. Top Title Banner
-    banner_w, banner_h = 240, 32
-    bx, by = (width - banner_w) // 2, 12
-    draw.rectangle(
-        [bx, by, bx + banner_w, by + banner_h],
-        fill=(10, 15, 30),
-        outline=(0, 240, 255),
-        width=2,
-    )
-    font = ImageFont.load_default()
-    draw.text((bx + 75, by + 10), "ASCII-MOTION", fill=(255, 255, 255), font=font)
 
     # 7. Progress indicator
     pbar_w = int(width * t)
