@@ -243,8 +243,12 @@ def create_synthetic_video(
         for idx in range(total_frames):
             frame_arr = generate_synthetic_frame(idx, total_frames, width, height)
             process.stdin.write(frame_arr.tobytes())
-        process.stdin.close()
-        _, stderr_output = process.communicate(timeout=30.0)
+        try:
+            process.stdin.close()
+        except (BrokenPipeError, OSError):
+            pass
+        stderr_output = process.stderr.read() if process.stderr else b""
+        process.wait(timeout=30.0)
     finally:
         if temp_wav.is_file():
             try:
